@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"prime/src"
 	"strings"
 )
 
@@ -19,7 +20,7 @@ func Prompt(message string) string {
 }
 
 func Menu() {
-	log.Println("Select menu", "\n 1 - Register", "\n 2 - Login")
+	log.Println("\n", "\n", "Select menu", "\n 1 - Register", "\n 2 - Login", "\n 3 - All users", "\n 4 - Quit")
 	selected := Prompt("")
 
 	switch selected {
@@ -27,7 +28,21 @@ func Menu() {
 		Name := Prompt("Your name :")
 		Password := Prompt("Password :")
 
-	default:
+		user := src.TUser{
+			Id:       "",
+			Name:     Name,
+			Password: hashPassword(Password),
+		}
+
+		Register(user)
+		log.Println("\n", "\n", "Success 🥳!", "\n", src.Users, "\n", "\n", "")
+	case "3":
+		AllUsers()
+	case "4":
 		return
+	default:
+		log.Println("Invalid choice")
 	}
+
+	Menu()
 }

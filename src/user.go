@@ -3,7 +3,7 @@ package src
 type TUser struct {
 	Id       string
 	Name     string
-	Password *string
+	Password string
 }
 
-var Users []User
+var Users []TUser

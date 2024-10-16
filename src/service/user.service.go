@@ -6,6 +6,10 @@ import (
 )
 
 func Register(user src.TUser) {
-	append(src.Users, user)
+	src.Users = append(src.Users, user)
+	log.Println(src.Users)
+}
+
+func AllUsers() {
 	log.Println(src.Users)
 }

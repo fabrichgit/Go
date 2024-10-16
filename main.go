@@ -1,7 +1,9 @@
 package main
 
-import "prime/src"
+import (
+	"prime/src/service"
+)
 
 func main() {
-	src.Users()
+	service.Menu()
 }
