@@ -6,6 +6,8 @@ import (
 	"os"
 	"prime/src"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 func Prompt(message string) string {
@@ -29,13 +31,25 @@ func Menu() {
 		Password := Prompt("Password :")
 
 		user := src.TUser{
-			Id:       "",
+			Id:       uuid.New().String(),
 			Name:     Name,
 			Password: hashPassword(Password),
 		}
 
 		Register(user)
 		log.Println("\n", "\n", "Success 🥳!", "\n", src.Users, "\n", "\n", "")
+	case "2":
+		Name := Prompt("Your name :")
+		Password := Prompt("Password :")
+
+		if Login(Name, Password) {
+			token := GenerateJWT(Name)
+			log.Println("Token", "<", token, ">", "\n", "\n", "")
+			log.Println("\n", "\n", "Success 🥳!", "\n", "\n", "")
+		} else {
+			log.Println("Invalid !")
+		}
+
 	case "3":
 		AllUsers()
 	case "4":

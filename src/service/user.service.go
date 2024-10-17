@@ -7,15 +7,14 @@ import (
 
 func Register(user src.TUser) {
 	src.Users = append(src.Users, user)
-	log.Println(src.Users)
 }
 
-func Login(user src.TUser) bool {
-	var UserFound = findUser(src.Users, func(u src.TUser) bool {
-		return u.Name == user.Name
+func Login(name string, password string) bool {
+	UserFound := findUser(src.Users, func(u src.TUser) bool {
+		return u.Name == name
 	})
 
-	return (UserFound != nil && checkPasswordHash(user.Password, UserFound.Password))
+	return (UserFound != nil && checkPasswordHash(password, UserFound.Password))
 }
 
 func AllUsers() {
