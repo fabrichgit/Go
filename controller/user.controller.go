@@ -18,71 +18,43 @@ func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 func GetOneUsers(res http.Response, req *http.Request) {}
 
 type AuthRequest struct {
-	name     string
-	password string
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 func Login(res http.ResponseWriter, req *http.Request) {
-	var loginReq AuthRequest
-	err := json.NewDecoder(req.Body).Decode(&loginReq)
+	body, err := io.ReadAll(req.Body)
+
 	if err != nil {
-		http.Error(res, "Error parsing", http.StatusBadRequest)
+		http.Error(res, "", http.StatusBadRequest)
 		return
 	}
 
-	var userFound = helper.FindUser(data.Users, func(u models.User) bool {
-		return u.Name == loginReq.name
+	defer req.Body.Close()
+
+	var loginReq AuthRequest
+	err = json.Unmarshal(body, &loginReq)
+
+	if err != nil {
+		http.Error(res, "", http.StatusBadRequest)
+		return
+	}
+
+	userFound := helper.FindUser(data.Users, func(u models.User) bool {
+		return u.Name == loginReq.Name
 	})
-	json.NewEncoder(res).Encode(userFound)
 
-	// if userFound == nil || !helper.CheckPasswordHash(loginReq.password, userFound.Password) {
-	// 	http.Error(res, "", http.StatusNotFound)
-	// 	return
-	// }
+	if userFound != nil && helper.CheckPasswordHash(loginReq.Password, userFound.Password) {
+		token := struct {
+			Token string
+		}{
+			Token: helper.GenerateJWT(userFound.ID),
+		}
+		json.NewEncoder(res).Encode(token)
+		return
+	}
 
-	// token := struct {
-	// 	token string
-	// }{
-	// 	token: helper.GenerateJWT(userFound.ID),
-	// }
-	// res.Header().Set("Content-Type", "application/json")
-	// json.NewEncoder(res).Encode(token)
-
-	// body, err := io.ReadAll(req.Body)
-
-	// if err != nil {
-	// 	http.Error(res, "", http.StatusBadRequest)
-	// 	return
-	// }
-
-	// defer req.Body.Close()
-
-	// var user UserAuth
-	// err = json.Unmarshal(body, &user)
-
-	// if err != nil {
-	// 	http.Error(res, "", http.StatusBadRequest)
-	// 	return
-	// }
-
-	// var userFound = helper.FindUser(data.Users, func(u models.User) bool {
-	// 	return u.Name == user.name
-	// })
-
-	// if userFound == nil {
-	// 	http.Error(res, "", http.StatusNotFound)
-	// 	return
-	// }
-
-	// if helper.CheckPasswordHash(user.password, userFound.Password) {
-	// 	token := TokenPayload{
-	// 		token: helper.GenerateJWT(userFound.ID),
-	// 	}
-	// 	json.NewEncoder(res).Encode(token)
-	// 	return
-	// }
-
-	// http.Error(res, "", http.StatusBadRequest)
+	http.Error(res, "", http.StatusUnauthorized)
 }
 
 func Register(res http.ResponseWriter, req *http.Request) {
