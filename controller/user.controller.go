@@ -22,6 +22,10 @@ type UserLog struct {
 	password string
 }
 
+type TokenPayload struct {
+	token string
+}
+
 func Login(res http.ResponseWriter, req *http.Request) {
 	body, err := io.ReadAll(req.Body)
 
@@ -50,7 +54,10 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	}
 
 	if helper.CheckPasswordHash(user.password, userFound.Password) {
-		json.NewEncoder(res).Encode(userFound)
+		token := TokenPayload{
+			token: helper.GenerateJWT(userFound.ID),
+		}
+		json.NewEncoder(res).Encode(token)
 		return
 	}
 
