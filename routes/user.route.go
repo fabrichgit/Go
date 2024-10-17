@@ -12,6 +12,8 @@ func Userhandler(res http.ResponseWriter, req *http.Request) {
 	switch {
 	case path == "/all" && req.Method == http.MethodGet:
 		controller.GetAllUsers(res, req)
+	case path == "/register" && req.Method == http.MethodPost:
+		controller.Register(res, req)
 	default:
 		http.Error(res, "Invalid request method", http.StatusMethodNotAllowed)
 	}

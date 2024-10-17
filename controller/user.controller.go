@@ -7,17 +7,17 @@ import (
 	"prime/data"
 	"prime/helper"
 	"prime/models"
+
+	"github.com/google/uuid"
 )
 
 func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(data.Users)
 }
 
-func GetOneUsers(res http.Response, req *http.Request) {
+func GetOneUsers(res http.Response, req *http.Request) {}
 
-}
-
-type UserLog struct {
+type UserAuth struct {
 	name     string
 	password string
 }
@@ -36,7 +36,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 
 	defer req.Body.Close()
 
-	var user UserLog
+	var user UserAuth
 	err = json.Unmarshal(body, &user)
 
 	if err != nil {
@@ -62,4 +62,29 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	}
 
 	http.Error(res, "", http.StatusBadRequest)
+}
+
+func Register(res http.ResponseWriter, req *http.Request) {
+	body, err := io.ReadAll(req.Body)
+
+	if err != nil {
+		http.Error(res, "", http.StatusBadRequest)
+		return
+	}
+
+	defer req.Body.Close()
+
+	var user models.User
+	err = json.Unmarshal(body, &user)
+
+	if err != nil {
+		http.Error(res, "", http.StatusBadRequest)
+		return
+	}
+
+	user.ID = uuid.New().String()
+
+	data.Users = append(data.Users, user)
+
+	json.NewEncoder(res).Encode(user)
 }
