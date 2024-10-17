@@ -13,3 +13,7 @@ func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 func GetOneUsers(res http.Response, req *http.Request) {
 
 }
+
+func Login(res http.ResponseWriter, req *http.Request) {
+
+}
