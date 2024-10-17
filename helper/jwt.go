@@ -10,16 +10,16 @@ import (
 var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 type Claims struct {
-	Username string `json:"username"`
+	Id string `json:"Id"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(username string) string {
+func GenerateJWT(id string) string {
 
 	expirationTime := time.Now().Add(5 * time.Minute)
 
 	claims := &Claims{
-		Username: username,
+		Id: id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
