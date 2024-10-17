@@ -5,14 +5,16 @@ import (
 	"log"
 	"net/http"
 	"prime/routes"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	helloHandler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "Hello, world!\n")
-	}
+	godotenv.Load()
 
-	http.HandleFunc("/hello", helloHandler)
+	http.HandleFunc("/hello", func(w http.ResponseWriter, req *http.Request) {
+		io.WriteString(w, "Hello, world!\n")
+	})
 	http.HandleFunc("/user/", routes.Userhandler)
 
 	log.Println("About to listen on 2005")
