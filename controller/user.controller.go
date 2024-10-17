@@ -6,6 +6,6 @@ import (
 	"prime/data"
 )
 
-func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(data.Users)
+func GetAllUsers(res http.ResponseWriter, req *http.Request) {
+	json.NewEncoder(res).Encode(data.Users)
 }

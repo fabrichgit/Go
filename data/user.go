@@ -1,5 +1,15 @@
 package data
 
-import "prime/models"
+import (
+	"prime/models"
 
-var Users []models.User
+	"github.com/google/uuid"
+)
+
+var Users = []models.User{
+	{
+		ID:       uuid.New().String(),
+		Name:     "Default",
+		Password: "blabla",
+	},
+}

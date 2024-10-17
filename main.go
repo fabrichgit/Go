@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"prime/routes"
 )
 
 func main() {
@@ -12,6 +13,7 @@ func main() {
 	}
 
 	http.HandleFunc("/hello", helloHandler)
+	http.HandleFunc("/user/", routes.Userhandler)
 
 	log.Println("About to listen on 2005")
 
