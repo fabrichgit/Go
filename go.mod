@@ -1,4 +1,4 @@
-module prime
+module "github.com/fabrichgit/Go"
 
 go 1.22.2
 
