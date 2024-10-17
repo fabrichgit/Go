@@ -12,5 +12,9 @@ func main() {
 	}
 
 	http.HandleFunc("/hello", helloHandler)
-	log.Fatal(http.ListenAndServe(":2005", nil))
+
+	log.Println("About to listen on 2005")
+
+	err := http.ListenAndServe(":2005", nil)
+	log.Fatal(err)
 }
