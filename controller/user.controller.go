@@ -11,11 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetAllUsers(res http.ResponseWriter, req *http.Request) {
-	json.NewEncoder(res).Encode(data.Users)
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	// claims := r.Context().Value("user").(jwt.MapClaims)
+	// if claims != nil {
+	// 	userId := claims["id"]
+	// 	json.NewEncoder(w).Encode(userId)
+	// }
+	json.NewEncoder(w).Encode(data.Users)
 }
-
-func GetOneUsers(res http.Response, req *http.Request) {}
 
 type AuthRequest struct {
 	Name     string `json:"name"`

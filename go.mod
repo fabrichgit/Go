@@ -3,6 +3,7 @@ module prime
 go 1.22.2
 
 require (
+	github.com/auth0/go-jwt-middleware/v2 v2.2.2 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -16,4 +17,5 @@ require (
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
+	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 )

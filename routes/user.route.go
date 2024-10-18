@@ -3,20 +3,22 @@ package routes
 import (
 	"net/http"
 	"prime/controller"
+	"prime/middleware"
 	"strings"
 )
 
-func Userhandler(res http.ResponseWriter, req *http.Request) {
-	path := strings.TrimPrefix(req.URL.Path, "/user")
+func Userhandler(w http.ResponseWriter, r *http.Request) {
+	path := strings.TrimPrefix(r.URL.Path, "/user")
 
 	switch {
-	case path == "/all" && req.Method == http.MethodGet:
-		controller.GetAllUsers(res, req)
-	case path == "/register" && req.Method == http.MethodPost:
-		controller.Register(res, req)
-	case path == "/login" && req.Method == http.MethodPost:
-		controller.Login(res, req)
+	case path == "/all" && r.Method == http.MethodGet:
+		middleware.JwtGuard(http.HandlerFunc(controller.GetAllUsers))
+		// controller.GetAllUsers(w, r)
+	case path == "/register" && r.Method == http.MethodPost:
+		controller.Register(w, r)
+	case path == "/login" && r.Method == http.MethodPost:
+		controller.Login(w, r)
 	default:
-		http.Error(res, "Invalid request method", http.StatusMethodNotAllowed)
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 }

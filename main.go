@@ -17,7 +17,7 @@ func main() {
 	})
 	http.HandleFunc("/user/", routes.Userhandler)
 
-	log.Println("About to listen on 2005")
+	log.Println("About to listen on PORT :2005")
 
 	err := http.ListenAndServe(":2005", nil)
 	log.Fatal(err)
