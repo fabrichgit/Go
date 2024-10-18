@@ -5,32 +5,30 @@ import (
 	"net/http"
 	"prime/helper"
 	"strings"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
-// const claimsKey key = "user"
-
-func JwtGuard(next http.Handler) http.Handler {
+func JwtGuard(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-
-		if token == "" {
-			http.Error(w, "", http.StatusServiceUnavailable)
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "Missing Authorization header", http.StatusUnauthorized)
 			return
 		}
 
-		token = strings.Split(token, " ")[1]
+		tokenString := strings.Split(authHeader, " ")[1]
+		claims := &jwt.MapClaims{}
 
-		claims, err := helper.ValidateJWT(token)
-		if err != nil {
-			http.Error(w, "", http.StatusServiceUnavailable)
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return helper.JwtKey, nil
+		})
+		if err != nil || !token.Valid {
+			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "user", claims)
+
+		ctx := context.WithValue(r.Context(), "jwtClaims", claims)
 		next.ServeHTTP(w, r.WithContext(ctx))
-
 	})
 }
-
-// func PUser(r http.Request, claims any) {
-// 	claims = r.Context().Value("user").(jwt.MapClaims)
-// }

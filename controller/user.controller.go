@@ -8,16 +8,36 @@ import (
 	"prime/helper"
 	"prime/models"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 )
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	// claims := r.Context().Value("user").(jwt.MapClaims)
-	// if claims != nil {
-	// 	userId := claims["id"]
-	// 	json.NewEncoder(w).Encode(userId)
-	// }
 	json.NewEncoder(w).Encode(data.Users)
+}
+
+func GetOne(w http.ResponseWriter, r *http.Request) {
+	claims, ok := r.Context().Value("jwtClaims").(*jwt.MapClaims)
+	if !ok {
+		http.Error(w, "failed to get claims", http.StatusInternalServerError)
+		return
+	}
+
+	id, ok := (*claims)["Id"].(string)
+	if !ok {
+		http.Error(w, "ID not found in token", http.StatusUnauthorized)
+		return
+	}
+
+	userFound := helper.FindUser(data.Users, func(u models.User) bool {
+		return u.ID == id
+	})
+
+	if userFound == nil {
+		http.Error(w, "", http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(userFound)
 }
 
 type AuthRequest struct {

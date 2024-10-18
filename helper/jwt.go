@@ -1,13 +1,15 @@
 package helper
 
 import (
+	"fmt"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte(os.Getenv("JWT_SECRET"))
+var JwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 type Claims struct {
 	Id string `json:"Id"`
@@ -27,7 +29,7 @@ func GenerateJWT(id string) string {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := token.SignedString(JwtKey)
 	if err != nil {
 		return ""
 	}
@@ -35,19 +37,46 @@ func GenerateJWT(id string) string {
 	return tokenString
 }
 
-// Fonction pour vérifier et décoder un JWT
 func ValidateJWT(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 
-	// Décoder et valider le token
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return JwtKey, nil
 	})
 
-	// Si le token n'est pas valide ou est expiré, renvoyer une erreur
 	if err != nil || !token.Valid {
 		return nil, err
 	}
 
 	return claims, nil
 }
+
+func GetPayload(w http.ResponseWriter, r *http.Request) (string, error) {
+	claims, ok := r.Context().Value("jwtClaims").(*jwt.MapClaims)
+	if !ok {
+		http.Error(w, "failed to get claims", http.StatusInternalServerError)
+		return "", fmt.Errorf("failed to get claims")
+	}
+
+	id, ok := (*claims)["Id"].(string)
+	if !ok {
+		http.Error(w, "ID not found in token", http.StatusUnauthorized)
+		return "", fmt.Errorf("ID not found in token")
+	}
+
+	return id, nil
+}
+
+// func GetPayload(r *http.Request) (string, error) {
+// 	claims, ok := r.Context().Value(jwtmiddleware.ContextKey{}).(*jwt.MapClaims)
+// 	if !ok {
+// 		return "", fmt.Errorf("failed to get claims")
+// 	}
+
+// 	id, ok := (*claims)["Id"].(string)
+// 	if !ok {
+// 		return "", fmt.Errorf("ID not found in token")
+// 	}
+
+// 	return id, nil
+// }
